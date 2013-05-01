@@ -18,7 +18,7 @@ module QuickbloxApi
   end
 
   class Authenticator
-    attr_reader :token, :request_body, :domain
+    attr_reader :response, :request_body, :domain
 
     def initialize(options={})
       @request_body = options.fetch(:session_request, SessionRequest.new).generate
@@ -27,11 +27,11 @@ module QuickbloxApi
     end
 
     def authenticate
-      unless @token
-        response = RestClient.post "https://#{domain}/session.json", request_body
-        @token = JSON.parse(response)["session"]["token"]
+      unless @response
+        @response = RestClient.post "https://#{domain}/session.json", request_body
+        @response = JSON.parse(@response)
       end
-      @token
+      @response
     end
   end
 
