@@ -11,12 +11,12 @@ module QuickbloxApi
   extend Config
   extend Session
 
-  RestClient.add_before_execution_proc do |req, params|
-    params[:headers]["QB-Token"] = self.session_token unless req.path.include?("session")
+  def self.get_user_by_external_id(external_id, options={})
+    get_request "https://#{self.domain}/users/external/#{external_id}.json"
   end
 
-  def self.get_user_by_external_id(external_id, options={})
-    response = RestClient.get "https://#{self.domain}/users/external/#{external_id}.json"
+  def self.get_request(url)
+    response = RestClient.get url, "QB-Token" => self.session_token
     JSON.parse(response)
   end
 end
