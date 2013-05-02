@@ -20,13 +20,11 @@ module QuickbloxApi
   end
 
   def self.get_request(url)
-    response = RestClient.get url, token_header
-    JSON.parse(response)
+    RestClient.get url, token_header
   end
 
   def self.post_request(url, params={})
-    response = RestClient.post url, params, token_header
-    JSON.parse(response)
+    RestClient.post url, params, token_header
   end
 
   private
