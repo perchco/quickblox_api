@@ -11,6 +11,18 @@ module QuickbloxApi
   extend Config
   extend Session
 
+  module Request
+    def self.try &block
+      begin
+        block.call
+      rescue Exception => e
+        raise e unless e.code == 401
+        ::QuickbloxApi.expire_session
+        self.try(&block)
+      end
+    end
+  end
+
   def self.get_user_by_external_id(external_id, options={})
     get_request "https://#{self.domain}/users/external/#{external_id}.json"
   end
@@ -20,11 +32,11 @@ module QuickbloxApi
   end
 
   def self.get_request(url)
-    RestClient.get url, token_header
+    Request.try { RestClient.get url, token_header }
   end
 
   def self.post_request(url, params={})
-    RestClient.post url, params, token_header
+    Request.try { RestClient.post url, params, token_header }
   end
 
   private

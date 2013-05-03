@@ -7,5 +7,9 @@ module QuickbloxApi
     def session_token
       session["session"]["token"]
     end
+
+    def expire_session
+      @session = nil
+    end
   end
 end
