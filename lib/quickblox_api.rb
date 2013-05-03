@@ -32,11 +32,11 @@ module QuickbloxApi
   end
 
   def self.get_request(url)
-    Request.try { RestClient.get url, token_header }
+    Request.try { RestClient.get(url, token_header) }
   end
 
   def self.post_request(url, params={})
-    Request.try { RestClient.post url, params, token_header }
+    Request.try { RestClient.post(url, params, token_header) }
   end
 
   private
