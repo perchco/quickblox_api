@@ -16,7 +16,7 @@ module QuickbloxApi
       begin
         block.call
       rescue Exception => e
-        raise e unless e.code == 401
+        raise e unless e.response.code == 401
         ::QuickbloxApi.expire_session
         self.try(&block)
       end
