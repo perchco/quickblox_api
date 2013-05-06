@@ -24,4 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rest-client"
   spec.add_dependency "ruby-hmac"
   spec.add_dependency "addressable"
+
+  spec.add_development_dependency('pry')
+  spec.add_development_dependency('pry-nav')
 end
