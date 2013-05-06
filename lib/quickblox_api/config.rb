@@ -18,5 +18,9 @@ module QuickbloxApi
     def domain
       self.config[:domain]
     end
+
+    def auth_retry_count
+      self.config[:auth_retry_count] || 3
+    end
   end
 end
