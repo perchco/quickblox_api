@@ -28,6 +28,7 @@ module QuickbloxApi
   end
 
   class UnprocessableRequestException < RequestException; end
+  class ResourceNotFoundException < RequestException; end
 
   class Request
     attr_accessor :tries
@@ -64,6 +65,10 @@ module QuickbloxApi
           raise InvalidTokenException.new(response, http_code, self.tries)
         when 422
           raise UnprocessableRequestException.new(response, http_code)
+        when 404
+          raise ResourceNotFoundException.new(response, http_code)
+        else
+          raise RequestException.new(response, http_code)
         end
       end
   end

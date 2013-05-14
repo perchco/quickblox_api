@@ -41,4 +41,24 @@ describe QuickbloxApi::Request do
       end.must_raise(QuickbloxApi::UnprocessableRequestException)
     end
   end
+
+  describe "resource not found" do
+    it "raises ResourceNotFoundException" do
+      proc do
+        request.try do
+          raise RestClient::ExceptionWithResponse.new(nil, 404)
+        end
+      end.must_raise(QuickbloxApi::ResourceNotFoundException)
+    end
+  end
+
+  describe "other error" do
+    it "raises RequestException" do
+      proc do
+        request.try do
+          raise RestClient::ExceptionWithResponse.new(nil, 406)
+        end
+      end.must_raise(QuickbloxApi::RequestException)
+    end
+  end
 end
