@@ -3,32 +3,42 @@ require 'minitest/autorun'
 require 'pry'
 
 require 'quickblox_api'
-require 'rest-client'
 
 describe QuickbloxApi::Request do
   let(:request) { QuickbloxApi::Request.new(auth_retry_count: 3) }
 
   describe "unauthorized request exhausts retry count" do
-    before do
-      request.try do
-        raise RestClient::ExceptionWithResponse.new(nil, 401)
-      end
+    it "raises InvalidTokenException" do
+      proc do
+        request.try do
+          raise RestClient::ExceptionWithResponse.new(nil, 401)
+        end
+      end.must_raise(QuickbloxApi::InvalidTokenException)
     end
 
-    subject { request.tries }
-
-    it "stops retrying at 3 times" do
-      subject.must_equal(3)
-    end
-
-    describe "unprocessable request" do
-      it "raises UnprocessableRequestException" do
-        proc do
-          request.try do
-            raise RestClient::ExceptionWithResponse.new(nil, 422)
-          end
-        end.must_raise(QuickbloxApi::UnprocessableRequestException)
+    describe "retry count" do
+      before(:each) do
+        begin
+          request.try { raise RestClient::ExceptionWithResponse.new(nil, 401) }
+        rescue QuickbloxApi::InvalidTokenException => e
+          @exception = e
+        end
       end
+      subject { @exception.retries }
+
+      it "returns the correct retry count" do
+        subject.must_equal 3
+      end
+    end
+  end
+
+  describe "unprocessable request" do
+    it "raises UnprocessableRequestException" do
+      proc do
+        request.try do
+          raise RestClient::ExceptionWithResponse.new(nil, 422)
+        end
+      end.must_raise(QuickbloxApi::UnprocessableRequestException)
     end
   end
 end

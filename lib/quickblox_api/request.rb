@@ -19,7 +19,14 @@ module QuickbloxApi
     end
   end
 
-  class InvalidTokenException < RequestException; end
+  class InvalidTokenException < RequestException
+    attr_reader :retries
+    def initialize(response, code, retries)
+      super(response, code)
+      @retries = retries
+    end
+  end
+
   class UnprocessableRequestException < RequestException; end
 
   class Request
@@ -53,6 +60,8 @@ module QuickbloxApi
 
       def handle_error(response, http_code)
         case http_code
+        when 401
+          raise InvalidTokenException.new(response, http_code, self.tries)
         when 422
           raise UnprocessableRequestException.new(response, http_code)
         end

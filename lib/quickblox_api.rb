@@ -12,6 +12,10 @@ module QuickbloxApi
   extend Config
   extend Session
 
+  def self.get_user_by_login(login, options={})
+    get_request "https://#{self.domain}/users/by_login.json?login=#{login}"
+  end
+
   def self.get_user_by_external_id(external_id, options={})
     get_request "https://#{self.domain}/users/external/#{external_id}.json"
   end
@@ -29,8 +33,8 @@ module QuickbloxApi
   end
 
   private
-    def new_request &block
-      Request.new.try block
+    def self.new_request &block
+      Request.new.try(&block)
     end
 
     def self.token_header
